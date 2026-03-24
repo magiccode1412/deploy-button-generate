@@ -17,9 +17,9 @@
     "strict": true,
     "verbatimModuleSyntax": false,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./src",
+    "allowImportingTsExtensions": true,
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src"],
