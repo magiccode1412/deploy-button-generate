@@ -263,6 +263,86 @@ const platforms: PlatformConfig[] = [
     badgeUrl: "https://cdnstatic.tencentcs.com/edgeone/pages/deploy.svg",
     badgeText: "使用 EdgeOne Pages 部署",
   },
+  {
+    id: "cloudflare-workers",
+    name: "Cloudflare Workers",
+    icon: "⚡",
+    color: "#F6821F",
+    description: "一键部署你的项目到 Cloudflare Workers",
+    fields: [
+      {
+        key: "repositoryUrl",
+        label: "仓库地址",
+        placeholder: "https://github.com/username/repo",
+        required: true,
+        description: "你的 GitHub 仓库 URL，仓库中需包含 wrangler.toml 配置",
+      },
+      {
+        key: "branch",
+        label: "分支",
+        placeholder: "main",
+        required: false,
+        description: "指定部署的 Git 分支，默认为 main",
+      },
+    ],
+    buildUrl: (params) => {
+      if (!params.repositoryUrl) return ""
+      const url = new URL("https://deploy.workers.cloudflare.com/")
+      url.searchParams.set("url", params.repositoryUrl)
+      if (params.branch) url.searchParams.set("branch", params.branch)
+      return url.toString()
+    },
+    badgeUrl: "https://deploy.workers.cloudflare.com/button",
+    badgeText: "Deploy to Cloudflare Workers",
+  },
+  {
+    id: "cloudflare-pages",
+    name: "Cloudflare Pages",
+    icon: "📄",
+    color: "#FB7044",
+    description: "一键部署静态站点到 Cloudflare Pages",
+    fields: [
+      {
+        key: "repositoryUrl",
+        label: "仓库地址",
+        placeholder: "https://github.com/username/repo",
+        required: true,
+        description: "你的 GitHub 仓库 URL",
+      },
+      {
+        key: "branch",
+        label: "分支",
+        placeholder: "main",
+        required: false,
+        description: "指定部署的 Git 分支，默认为 main",
+      },
+      {
+        key: "buildCommand",
+        label: "构建命令",
+        placeholder: "npm run build",
+        required: false,
+        description: "构建静态资源的命令，如 npm run build、pnpm build",
+      },
+      {
+        key: "outputDirectory",
+        label: "输出目录",
+        placeholder: "dist",
+        required: false,
+        description: "构建产物的输出目录，如 dist、build、out",
+      },
+    ],
+    buildUrl: (params) => {
+      if (!params.repositoryUrl) return ""
+      const url = new URL("https://deploy.workers.cloudflare.com/")
+      url.searchParams.set("url", params.repositoryUrl)
+      if (params.branch) url.searchParams.set("branch", params.branch)
+      if (params.buildCommand) url.searchParams.set("build-command", params.buildCommand)
+      if (params.outputDirectory) url.searchParams.set("build-output-directory", params.outputDirectory)
+      return url.toString()
+    },
+    badgeUrl: "https://deploy.workers.cloudflare.com/button",
+    badgeText: "Deploy to Cloudflare Pages",
+  },
 ]
 
 export default platforms

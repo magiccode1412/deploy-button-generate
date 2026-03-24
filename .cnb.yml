@@ -6,3 +6,6 @@ $:
       services:
         - vscode
         - docker
+      stages:
+        - name: install
+          script: pnpm i
