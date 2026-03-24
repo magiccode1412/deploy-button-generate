@@ -1,0 +1,8 @@
+# .cnb.yml
+$:
+  vscode:
+    - docker:
+        image: docker.cnb.cool/magiccode1412/universal/node_20_dev:latest
+      services:
+        - vscode
+        - docker
