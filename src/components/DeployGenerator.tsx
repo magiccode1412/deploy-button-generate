@@ -48,12 +48,12 @@ export function DeployGenerator() {
   const deployUrl = useMemo(() => currentPlatform.buildUrl(currentValues), [currentPlatform, currentValues])
 
   const markdown = useMemo(() => {
-    if (!deployUrl || !isValidDeployUrl(deployUrl)) return ""
+    if (!isValidDeployUrl(deployUrl)) return ""
     return `[![${currentPlatform.badgeText}](${currentPlatform.badgeUrl})](${deployUrl})`
   }, [currentPlatform, deployUrl])
 
   const html = useMemo(() => {
-    if (!deployUrl || !isValidDeployUrl(deployUrl)) return ""
+    if (!isValidDeployUrl(deployUrl)) return ""
     return `<a href="${deployUrl}" target="_blank"><img src="${currentPlatform.badgeUrl}" alt="${currentPlatform.badgeText}" /></a>`
   }, [currentPlatform, deployUrl])
 

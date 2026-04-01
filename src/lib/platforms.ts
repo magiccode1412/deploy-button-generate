@@ -158,29 +158,6 @@ const platforms: PlatformConfig[] = [
     badgeText: "Deploy on Zeabur",
   },
   {
-    id: "surge",
-    name: "Surge",
-    icon: "△",
-    color: "#00C9FF",
-    description: "部署静态站点到 Surge.sh",
-    fields: [
-      {
-        key: "repositoryUrl",
-        label: "仓库地址",
-        placeholder: "https://github.com/username/repo",
-        required: true,
-        description: "你的 Git 仓库 URL",
-      },
-    ],
-    buildUrl: (params) => {
-      const url = new URL("https://surge.sh/")
-      if (params.repositoryUrl) url.searchParams.set("repo", params.repositoryUrl)
-      return url.toString()
-    },
-    badgeUrl: "https://surge.sh/dispatch-button.svg",
-    badgeText: "Deploy to Surge",
-  },
-  {
     id: "edgeone",
     name: "EdgeOne Pages",
     icon: "☁",
