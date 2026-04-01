@@ -1,9 +1,16 @@
+export interface PlatformFieldOption {
+  label: string
+  value: string
+}
+
 export interface PlatformField {
   key: string
   label: string
   placeholder: string
   required: boolean
   description?: string
+  type?: "text" | "select"
+  options?: PlatformFieldOption[]
 }
 
 export interface PlatformConfig {
@@ -181,18 +188,36 @@ const platforms: PlatformConfig[] = [
     description: "一键部署你的项目到腾讯云 EdgeOne Pages",
     fields: [
       {
+        key: "region",
+        label: "控制台版本",
+        placeholder: "",
+        required: false,
+        type: "select",
+        options: [
+          { label: "国内版", value: "domestic" },
+          { label: "国际版", value: "international" },
+        ],
+      },
+      {
         key: "repositoryUrl",
         label: "仓库地址",
         placeholder: "https://github.com/username/repo",
         required: false,
-        description: "GitHub 仓库地址，支持子路径如 /tree/branch",
+        description: "通过其他 GitHub 仓库来部署的仓库地址，支持子路径如 /tree/branch-name（与模板名称二选一）",
+      },
+      {
+        key: "repositoryName",
+        label: "仓库名称",
+        placeholder: "my-repo",
+        required: false,
+        description: "GitHub 仓库名称",
       },
       {
         key: "template",
         label: "模板名称",
         placeholder: "my-template",
         required: false,
-        description: "通过 Pages 官方模板部署（与仓库地址二选一）",
+        description: "通过 Pages 官方模板来部署的模板名称（与仓库地址二选一）",
       },
       {
         key: "projectName",
@@ -205,59 +230,65 @@ const platforms: PlatformConfig[] = [
         label: "构建命令",
         placeholder: "npm run build",
         required: false,
+        description: "自定义项目的构建命令",
       },
       {
         key: "installCommand",
         label: "安装命令",
         placeholder: "npm install",
         required: false,
+        description: "自定义项目的依赖安装命令",
       },
       {
         key: "outputDirectory",
         label: "输出目录",
         placeholder: "./dist",
         required: false,
+        description: "构建后产物的输出目录",
       },
       {
         key: "rootDirectory",
         label: "根目录",
         placeholder: "/",
         required: false,
+        description: "构建根目录",
       },
       {
         key: "env",
         label: "环境变量",
         placeholder: "KEY1,KEY2,KEY3",
         required: false,
-        description: "逗号分隔的环境变量名称",
+        description: "仓库必要的环境变量名称，多个可用英文逗号连接",
       },
       {
         key: "envDescription",
         label: "环境变量说明",
         placeholder: "环境变量相关描述",
         required: false,
+        description: "与环境变量相关的描述信息",
       },
       {
         key: "envLink",
         label: "环境变量链接",
         placeholder: "https://example.com/docs",
         required: false,
-        description: "与环境变量相关的文档链接",
+        description: "与环境变量相关的链接，如获取密钥的文档地址",
       },
     ],
     buildUrl: (params) => {
-      const url = new URL("https://console.cloud.tencent.com/edgeone/pages/new")
-      const encode = (v: string) => encodeURIComponent(v)
-      if (params.repositoryUrl) url.searchParams.set("repository-url", encode(params.repositoryUrl))
-      if (params.template) url.searchParams.set("template", encode(params.template))
-      if (params.projectName) url.searchParams.set("project-name", encode(params.projectName))
-      if (params.buildCommand) url.searchParams.set("build-command", encode(params.buildCommand))
-      if (params.installCommand) url.searchParams.set("install-command", encode(params.installCommand))
-      if (params.outputDirectory) url.searchParams.set("output-directory", encode(params.outputDirectory))
-      if (params.rootDirectory) url.searchParams.set("root-directory", encode(params.rootDirectory))
-      if (params.env) url.searchParams.set("env", encode(params.env))
-      if (params.envDescription) url.searchParams.set("env-description", encode(params.envDescription))
-      if (params.envLink) url.searchParams.set("env-link", encode(params.envLink))
+      const domain = params.region === "international" ? "edgeone.ai" : "console.cloud.tencent.com"
+      const url = new URL(`https://${domain}/edgeone/pages/new`)
+      if (params.repositoryUrl) url.searchParams.set("repository-url", params.repositoryUrl)
+      if (params.repositoryName) url.searchParams.set("repository-name", params.repositoryName)
+      if (params.template) url.searchParams.set("template", params.template)
+      if (params.projectName) url.searchParams.set("project-name", params.projectName)
+      if (params.buildCommand) url.searchParams.set("build-command", params.buildCommand)
+      if (params.installCommand) url.searchParams.set("install-command", params.installCommand)
+      if (params.outputDirectory) url.searchParams.set("output-directory", params.outputDirectory)
+      if (params.rootDirectory) url.searchParams.set("root-directory", params.rootDirectory)
+      if (params.env) url.searchParams.set("env", params.env)
+      if (params.envDescription) url.searchParams.set("env-description", params.envDescription)
+      if (params.envLink) url.searchParams.set("env-link", params.envLink)
       return url.toString()
     },
     badgeUrl: "https://cdnstatic.tencentcs.com/edgeone/pages/deploy.svg",

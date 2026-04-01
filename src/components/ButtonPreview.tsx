@@ -1,17 +1,52 @@
-import { PlatformConfig } from "@/lib/platforms"
+import { PlatformConfig, PlatformField } from "@/lib/platforms"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Copy, Check, ExternalLink } from "lucide-react"
+import { Copy, Check, ExternalLink, Globe } from "lucide-react"
 import { useState } from "react"
+import { cn } from "@/lib/utils"
 
 interface ButtonPreviewProps {
   platform: PlatformConfig
   deployUrl: string
   markdown: string
   html: string
+  values?: Record<string, string>
+  onChange?: (key: string, value: string) => void
 }
 
-export function ButtonPreview({ platform, deployUrl, markdown, html }: ButtonPreviewProps) {
+function RegionToggle({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const options = [
+    { label: "国内版", desc: "console.cloud.tencent.com", value: "domestic" },
+    { label: "国际版", desc: "edgeone.ai", value: "international" },
+  ]
+  return (
+    <div className="space-y-2">
+      <p className="text-sm font-medium flex items-center gap-1.5">
+        <Globe className="h-3.5 w-3.5" />
+        控制台版本
+      </p>
+      <div className="flex rounded-lg border bg-muted/50 p-1 gap-1">
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => onChange(opt.value)}
+            className={cn(
+              "flex-1 flex flex-col items-center rounded-md px-3 py-2 text-sm transition-all cursor-pointer",
+              value === opt.value
+                ? "bg-background text-foreground shadow-sm font-medium"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <span>{opt.label}</span>
+            <span className="text-[10px] opacity-60 mt-0.5">{opt.desc}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export function ButtonPreview({ platform, deployUrl, markdown, html, values, onChange }: ButtonPreviewProps) {
   const [copied, setCopied] = useState<string | null>(null)
 
   const copyToClipboard = async (text: string, type: string) => {
@@ -22,6 +57,8 @@ export function ButtonPreview({ platform, deployUrl, markdown, html }: ButtonPre
 
   const hasUrl = deployUrl && deployUrl !== "" && !deployUrl.endsWith("/new") && !deployUrl.endsWith("/new?")
 
+  const selectFields = platform.fields.filter((f) => f.type === "select")
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -31,6 +68,14 @@ export function ButtonPreview({ platform, deployUrl, markdown, html }: ButtonPre
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-5">
+        {selectFields.map((field) => (
+          <RegionToggle
+            key={field.key}
+            value={values?.[field.key] || field.options?.[0]?.value || ""}
+            onChange={(v) => onChange?.(field.key, v)}
+          />
+        ))}
+
         <div className="space-y-2">
           <p className="text-sm font-medium">预览</p>
           <div className="flex items-center gap-3 rounded-lg border p-4 bg-muted/30">

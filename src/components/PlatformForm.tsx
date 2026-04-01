@@ -11,7 +11,7 @@ interface PlatformFormProps {
 export function PlatformForm({ platform, values, onChange }: PlatformFormProps) {
   return (
     <div className="space-y-4">
-      {platform.fields.map((field) => (
+      {platform.fields.filter((f) => f.type !== "select").map((field) => (
         <div key={field.key} className="space-y-2">
           <Label htmlFor={field.key} className="flex items-center gap-1">
             {field.label}

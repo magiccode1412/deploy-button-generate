@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -6,9 +6,30 @@ import { PlatformForm } from "@/components/PlatformForm"
 import { ButtonPreview } from "@/components/ButtonPreview"
 import platforms from "@/lib/platforms"
 
+/** 初始化含 select 类型字段的平台的默认值 */
+function getInitialValues(): Record<string, Record<string, string>> {
+  const values: Record<string, Record<string, string>> = {}
+  for (const p of platforms) {
+    const selectDefaults: Record<string, string> = {}
+    for (const f of p.fields) {
+      if (f.type === "select" && f.options?.[0]?.value) {
+        selectDefaults[f.key] = f.options[0].value
+      }
+    }
+    if (Object.keys(selectDefaults).length > 0) {
+      values[p.id] = selectDefaults
+    }
+  }
+  return values
+}
+
+function isValidDeployUrl(url: string): boolean {
+  return url !== "" && !url.endsWith("/new") && !url.endsWith("/new?")
+}
+
 export function DeployGenerator() {
   const [activePlatform, setActivePlatform] = useState(platforms[0].id)
-  const [formValues, setFormValues] = useState<Record<string, Record<string, string>>>({})
+  const [formValues, setFormValues] = useState<Record<string, Record<string, string>>>(getInitialValues)
 
   const currentPlatform = useMemo(
     () => platforms.find((p) => p.id === activePlatform) || platforms[0],
@@ -17,24 +38,22 @@ export function DeployGenerator() {
 
   const currentValues = formValues[activePlatform] || {}
 
-  const handleFieldChange = (key: string, value: string) => {
+  const handleFieldChange = useCallback((platformId: string, key: string, value: string) => {
     setFormValues((prev) => ({
       ...prev,
-      [activePlatform]: { ...prev[activePlatform], [key]: value },
+      [platformId]: { ...prev[platformId], [key]: value },
     }))
-  }
+  }, [])
 
-  const deployUrl = useMemo(() => {
-    return currentPlatform.buildUrl(currentValues)
-  }, [currentPlatform, currentValues])
+  const deployUrl = useMemo(() => currentPlatform.buildUrl(currentValues), [currentPlatform, currentValues])
 
   const markdown = useMemo(() => {
-    if (!deployUrl || deployUrl.endsWith("/new") || deployUrl.endsWith("/new?")) return ""
+    if (!deployUrl || !isValidDeployUrl(deployUrl)) return ""
     return `[![${currentPlatform.badgeText}](${currentPlatform.badgeUrl})](${deployUrl})`
   }, [currentPlatform, deployUrl])
 
   const html = useMemo(() => {
-    if (!deployUrl || deployUrl.endsWith("/new") || deployUrl.endsWith("/new?")) return ""
+    if (!deployUrl || !isValidDeployUrl(deployUrl)) return ""
     return `<a href="${deployUrl}" target="_blank"><img src="${currentPlatform.badgeUrl}" alt="${currentPlatform.badgeText}" /></a>`
   }, [currentPlatform, deployUrl])
 
@@ -67,62 +86,54 @@ export function DeployGenerator() {
           ))}
         </TabsList>
 
-        {platforms.map((platform) => (
-          <TabsContent key={platform.id} value={platform.id}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
-              {/* Left: Form */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <span className="text-lg">{platform.icon}</span>
-                    <span>{platform.name}</span>
-                  </CardTitle>
-                  <CardDescription>{platform.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <PlatformForm
-                    platform={platform}
-                    values={formValues[platform.id] || {}}
-                    onChange={(key, value) => {
-                      setFormValues((prev) => ({
-                        ...prev,
-                        [platform.id]: { ...prev[platform.id], [key]: value },
-                      }))
-                    }}
-                  />
-                </CardContent>
-              </Card>
+        {platforms.map((platform) => {
+          const isActive = platform.id === activePlatform
+          const platformUrl = isActive ? deployUrl : platform.buildUrl(formValues[platform.id] || {})
+          const platformMd = isActive
+            ? markdown
+            : isValidDeployUrl(platformUrl)
+              ? `[![${platform.badgeText}](${platform.badgeUrl})](${platformUrl})`
+              : ""
+          const platformHtml = isActive
+            ? html
+            : isValidDeployUrl(platformUrl)
+              ? `<a href="${platformUrl}" target="_blank"><img src="${platform.badgeUrl}" alt="${platform.badgeText}" /></a>`
+              : ""
 
-              {/* Right: Preview & Output */}
-              <ButtonPreview
-                platform={platform}
-                deployUrl={
-                  platform.id === activePlatform
-                    ? deployUrl
-                    : (platform.buildUrl(formValues[platform.id] || {}))
-                }
-                markdown={
-                  platform.id === activePlatform
-                    ? markdown
-                    : (() => {
-                        const url = platform.buildUrl(formValues[platform.id] || {})
-                        if (!url || url.endsWith("/new") || url.endsWith("/new?")) return ""
-                        return `[![${platform.badgeText}](${platform.badgeUrl})](${url})`
-                      })()
-                }
-                html={
-                  platform.id === activePlatform
-                    ? html
-                    : (() => {
-                        const url = platform.buildUrl(formValues[platform.id] || {})
-                        if (!url || url.endsWith("/new") || url.endsWith("/new?")) return ""
-                        return `<a href="${url}" target="_blank"><img src="${platform.badgeUrl}" alt="${platform.badgeText}" /></a>`
-                      })()
-                }
-              />
-            </div>
-          </TabsContent>
-        ))}
+          return (
+            <TabsContent key={platform.id} value={platform.id}>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-4">
+                {/* Left: Form */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <span className="text-lg">{platform.icon}</span>
+                      <span>{platform.name}</span>
+                    </CardTitle>
+                    <CardDescription>{platform.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <PlatformForm
+                      platform={platform}
+                      values={formValues[platform.id] || {}}
+                      onChange={(key, value) => handleFieldChange(platform.id, key, value)}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Right: Preview & Output */}
+                <ButtonPreview
+                  platform={platform}
+                  deployUrl={platformUrl}
+                  markdown={platformMd}
+                  html={platformHtml}
+                  values={formValues[platform.id] || {}}
+                  onChange={(key, value) => handleFieldChange(platform.id, key, value)}
+                />
+              </div>
+            </TabsContent>
+          )
+        })}
       </Tabs>
     </div>
   )
