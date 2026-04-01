@@ -19,41 +19,17 @@
 
 ## 一键部署本项目
 
-Vercel
-
-[![Deploy with Vercel](public/vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/magiccode1412/deploy-button-generate)
-
-Netlify
-
-[![Deploy to Netlify](public/netify.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/magiccode1412/deploy-button-generate)
-
-Railway
-
-[![Deploy on Railway](public/railway.svg)](https://railway.app/template/deploy-button-generate)
-
-Render
-
-[![Deploy to Render](public/render.svg)](https://render.com/deploy?repo=https://github.com/magiccode1412/deploy-button-generate)
-
-Zeabur
-
-[![Deploy on Zeabur](public/zeabur.svg)](https://zeabur.com/templates/deploy-button-generate)
-
-edgeone 国内版
-
-[![使用 EdgeOne Pages 部署](public/edgeone.svg)](https://console.cloud.tencent.com/edgeone/pages/new?repository-url=https%3A%2F%2Fgithub.com%2Fmagiccode1412%2Fdeploy-button-generate&repository-name=deploy-button-generate&project-name=deploy-button-generate&build-command=pnpm+build&install-command=pnpm+i&output-directory=.%2Fdist)
-
-edgeone 国际版
-
-[![使用 EdgeOne Pages 部署](public/edgeone.svg)](https://edgeone.ai/edgeone/pages/new?repository-url=https%3A%2F%2Fgithub.com%2Fmagiccode1412%2Fdeploy-button-generate&repository-name=deploy-button-generate&project-name=deploy-button-generate&build-command=pnpm+build&install-command=pnpm+i&output-directory=.%2Fdist)
-
-Cloudflare Workers
-
-[![Deploy to Cloudflare Workers](public/cloudflare.svg)](https://deploy.workers.cloudflare.com/?url=https://github.com/magiccode1412/deploy-button-generate)
-
-Cloudflare Pages
-
-[![Deploy to Cloudflare Pages](public/cloudflare.svg)](https://deploy.workers.cloudflare.com/?url=https://github.com/magiccode1412/deploy-button-generate)
+| 平台 | 部署按钮 |
+|------|----------|
+| Vercel | [![Deploy with Vercel](public/vercel.svg)](https://vercel.com/new/clone?repository-url=https://github.com/magiccode1412/deploy-button-generate) |
+| Netlify | [![Deploy to Netlify](public/netify.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/magiccode1412/deploy-button-generate) |
+| Railway | [![Deploy on Railway](public/railway.svg)](https://railway.app/template/deploy-button-generate) |
+| Render | [![Deploy to Render](public/render.svg)](https://render.com/deploy?repo=https://github.com/magiccode1412/deploy-button-generate) |
+| Zeabur | [![Deploy on Zeabur](public/zeabur.svg)](https://zeabur.com/templates/deploy-button-generate) |
+| EdgeOne Pages 国内版 | [![使用 EdgeOne Pages 部署](public/edgeone.svg)](https://console.cloud.tencent.com/edgeone/pages/new?repository-url=https%3A%2F%2Fgithub.com%2Fmagiccode1412%2Fdeploy-button-generate&repository-name=deploy-button-generate&project-name=deploy-button-generate&build-command=pnpm+build&install-command=pnpm+i&output-directory=.%2Fdist) |
+| EdgeOne Pages 国际版 | [![使用 EdgeOne Pages 部署](public/edgeone.svg)](https://edgeone.ai/edgeone/pages/new?repository-url=https%3A%2F%2Fgithub.com%2Fmagiccode1412%2Fdeploy-button-generate&repository-name=deploy-button-generate&project-name=deploy-button-generate&build-command=pnpm+build&install-command=pnpm+i&output-directory=.%2Fdist) |
+| Cloudflare Workers | [![Deploy to Cloudflare Workers](public/cloudflare.svg)](https://deploy.workers.cloudflare.com/?url=https://github.com/magiccode1412/deploy-button-generate) |
+| Cloudflare Pages | [![Deploy to Cloudflare Pages](public/cloudflare.svg)](https://deploy.workers.cloudflare.com/?url=https://github.com/magiccode1412/deploy-button-generate) |
 
 ## 开发
 
