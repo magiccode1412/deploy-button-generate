@@ -292,12 +292,23 @@ const platforms: PlatformConfig[] = [
         required: false,
         description: "指定部署的 Git 分支，默认为 main",
       },
+      {
+        key: "rootDirectory",
+        label: "根目录",
+        placeholder: "packages/my-app",
+        required: false,
+        description: "Monorepo 中的子目录路径，将作为构建根目录（如 packages/my-app）",
+      },
     ],
     buildUrl: (params) => {
       if (!params.repositoryUrl) return ""
+      let repoUrl = params.repositoryUrl
+      if (params.rootDirectory) {
+        const branch = params.branch || "main"
+        repoUrl = `${repoUrl.replace(/\/$/, "")}/tree/${branch}/${params.rootDirectory.replace(/^\//, "")}`
+      }
       const url = new URL("https://deploy.workers.cloudflare.com/")
-      url.searchParams.set("url", params.repositoryUrl)
-      if (params.branch) url.searchParams.set("branch", params.branch)
+      url.searchParams.set("url", repoUrl)
       return url.toString()
     },
     badgeUrl: "https://deploy.workers.cloudflare.com/button",
@@ -338,12 +349,23 @@ const platforms: PlatformConfig[] = [
         required: false,
         description: "构建产物的输出目录，如 dist、build、out",
       },
+      {
+        key: "rootDirectory",
+        label: "根目录",
+        placeholder: "packages/my-app",
+        required: false,
+        description: "Monorepo 中的子目录路径，将作为构建根目录（如 packages/my-app）",
+      },
     ],
     buildUrl: (params) => {
       if (!params.repositoryUrl) return ""
+      let repoUrl = params.repositoryUrl
+      if (params.rootDirectory) {
+        const branch = params.branch || "main"
+        repoUrl = `${repoUrl.replace(/\/$/, "")}/tree/${branch}/${params.rootDirectory.replace(/^\//, "")}`
+      }
       const url = new URL("https://deploy.workers.cloudflare.com/")
-      url.searchParams.set("url", params.repositoryUrl)
-      if (params.branch) url.searchParams.set("branch", params.branch)
+      url.searchParams.set("url", repoUrl)
       if (params.buildCommand) url.searchParams.set("build-command", params.buildCommand)
       if (params.outputDirectory) url.searchParams.set("build-output-directory", params.outputDirectory)
       return url.toString()
